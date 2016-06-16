@@ -77,7 +77,7 @@ void setup() {
  */
 void loop() {
 	//int sgn = digitalRead(sensorPin);
-        if (timeLoop == 3 && state == 0) {
+        if (timeLoop == 2 && state == 0) {
             state = 1;
         }
 	if (timeLoop == timeFlag && state == 1) {
@@ -100,7 +100,7 @@ void loop() {
         if (state == 0) {
             // first acceleration
             motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
-            servo.writeMicroseconds(1569);
+            servo.writeMicroseconds(1700);
         }
         if (state == 1) {
             motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
