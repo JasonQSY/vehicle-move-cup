@@ -21,8 +21,8 @@ int state;
 
 int timeLoop;
 const int timeFlag = 10;
-const int initVelo = 120;
-const int extraVelo = 135;
+const int initVelo = 100;
+const int extraVelo = 155;
 const int maxVelo = 255;
 
 /* Servo */
