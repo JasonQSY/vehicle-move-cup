@@ -1,6 +1,6 @@
 #include <Servo.h>
 
-/* Motor pin */
+/* constants for pin */
 const int leftMotor1 = 2;
 const int leftMotor2 = 3;
 const int rightMotor1 = 4;
@@ -9,29 +9,28 @@ const int rightMotor2 = 7;
 const int leftPWM = 5;
 const int rightPWM = 6;
 
-/* sensor pin */
-const int sensorPin = 10;
-
-/* servo pin */
 const int servoPin = 11;
 
-/* singal from sensor pin */
-int sgn;
-int state;
-
-int timeLoop;
+/* constants for velocity control */
 const int timeFlag = 8;
 const int initVelo = 100;
 const int extraVelo = 155;
 const int maxVelo = 255;
 
+/* global variables */
+int sgn;
+int state;
+int timeLoop;
+
 /* Servo */
 Servo servo;
 
 /**
- * state = 0 forward
- * state = 1 backward
- * value PWN
+ * Function to control the motor
+ *
+ * @param state = 0 forward
+ *        state = 1 backward
+ * @param value PWN
  */
 void motor(int state, int value) {
     if (state == 0) {
@@ -50,6 +49,9 @@ void motor(int state, int value) {
     analogWrite(rightPWM, value);
 }
 
+/**
+ * Function to stop the car
+ */
 void stopCar() {
     digitalWrite(leftMotor1, LOW);
     digitalWrite(leftMotor2, LOW);
@@ -64,7 +66,6 @@ void setup() {
     servo.attach(servoPin);
     timeLoop = 0;
     servo.writeMicroseconds(1500);
-    //servo.writeMicroseconds(1530);
 }
 
 /**
@@ -76,49 +77,42 @@ void setup() {
  * state 5 : stop
  */
 void loop() {
-	//int sgn = digitalRead(sensorPin);
-        if (timeLoop == 2 && state == 0) {
-            state = 1;
-        }
-	if (timeLoop == timeFlag && state == 1) {
-            // slow down the velocity
-            state = 2;
+    if (timeLoop == 2) {
+        state = 1;
+    }
+    if (timeLoop == timeFlag) {
+        state = 2;
 	}
-        if (timeLoop == 2 * timeFlag && state == 2) {
-            // accelerate again
-            state = 3;
-        }
-        if (timeLoop == 3 * timeFlag && state == 3) {
-            // slow down the velocity again
-            state = 4;
-        }
-        if (timeLoop == 4 * timeFlag + 4 && state == 4) {
-            // stop
-            state = 5;
-        }
-        
-        if (state == 0) {
-            // first acceleration
-            motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
-            servo.writeMicroseconds(1700);
-        }
-        if (state == 1) {
-            motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
-            servo.writeMicroseconds(1500);
-        }
-        if (state == 2) {
-            motor(0, maxVelo - (extraVelo / timeFlag) * (timeLoop - timeFlag));
-        }
-        if (state == 3) {
-            motor(1, initVelo + (extraVelo / timeFlag) * (timeLoop - 2 * timeFlag));
-            servo.writeMicroseconds(1500);
-	}
-        if (state == 4) {
-            motor(1, maxVelo - (extraVelo / timeFlag) * (timeLoop - 3 * timeFlag));
-        }
-        if (state == 5) {
-            stopCar();
-        }
+    if (timeLoop == 2 * timeFlag) {
+        state = 3;
+    }
+    if (timeLoop == 3 * timeFlag) {
+        state = 4;
+    }
+    if (timeLoop == 4 * timeFlag) {
+        state = 5;
+    }
+
+    if (state == 0) {
+        motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
+        servo.writeMicroseconds(1700);
+    }
+    if (state == 1) {
+        motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
+        servo.writeMicroseconds(1500);
+    }
+    if (state == 2) {
+        motor(0, maxVelo - (extraVelo / timeFlag) * (timeLoop - timeFlag));
+    }
+    if (state == 3) {
+        motor(1, initVelo + (extraVelo / timeFlag) * (timeLoop - 2 * timeFlag));
+    }
+    if (state == 4) {
+        motor(1, maxVelo - (extraVelo / timeFlag) * (timeLoop - 3 * timeFlag));
+    }
+    if (state == 5) {
+        stopCar();
+    }
 	timeLoop += 1;
 	delay(80);
 }
