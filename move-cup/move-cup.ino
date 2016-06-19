@@ -20,9 +20,9 @@ int sgn;
 int state;
 
 int timeLoop;
-const int timeFlag = 10;
-const int initVelo = 120;
-const int extraVelo = 135;
+const int timeFlag = 8;
+const int initVelo = 100;
+const int extraVelo = 155;
 const int maxVelo = 255;
 
 /* Servo */
@@ -77,7 +77,7 @@ void setup() {
  */
 void loop() {
 	//int sgn = digitalRead(sensorPin);
-        if (timeLoop == 3 && state == 0) {
+        if (timeLoop == 2 && state == 0) {
             state = 1;
         }
 	if (timeLoop == timeFlag && state == 1) {
@@ -92,7 +92,7 @@ void loop() {
             // slow down the velocity again
             state = 4;
         }
-        if (timeLoop == 4 * timeFlag && state == 4) {
+        if (timeLoop == 4 * timeFlag + 4 && state == 4) {
             // stop
             state = 5;
         }
@@ -100,7 +100,7 @@ void loop() {
         if (state == 0) {
             // first acceleration
             motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
-            servo.writeMicroseconds(1569);
+            servo.writeMicroseconds(1700);
         }
         if (state == 1) {
             motor(0, initVelo + (extraVelo / timeFlag) * timeLoop);
